@@ -7,86 +7,86 @@ template < class T >
 class QueueLinked
 {
 
-   private:
-      NextNode<T>* back;
-      int sze;
+	private:
+		NextNode<T>* back;
+		int sze;
 
-   public:
-      QueueLinked();
-      ~QueueLinked();
-      bool isEmpty();
-      int size();
-      void dequeueAll(); 
-      T* peek();
-      T* dequeue();
-      void enqueue(T* item);
+	public:
+		QueueLinked();
+		~QueueLinked();
+		bool isEmpty();
+		int size();
+		void dequeueAll(); 
+		T* peek();
+		T* dequeue();
+		void enqueue(T* item);
 
 };
 
 template < class T >
 QueueLinked<T>::QueueLinked()
 {
-   back = NULL;
-   sze = 0;
+	back = NULL;
+	sze = 0;
 }
 
 template < class T >
 QueueLinked<T>::~QueueLinked()
 {
-   dequeueAll();
+	dequeueAll();
 }
 
 template < class T >
 bool QueueLinked<T>::isEmpty()
 {
-    return sze == 0;
+	 return sze == 0;
 }
 
 template < class T >
 int QueueLinked<T>::size()
 {
-    return sze;
+	 return sze;
 }
 
 template < class T >
 void QueueLinked<T>::dequeueAll()
 {
-   if (sze == 0) return;
+	if (sze == 0) return;
 
-   NextNode<T>* prev = NULL;
-   NextNode<T>* curr = back->getNext();  //the head
-   back->setNext(NULL);  //break the bridge link
+	NextNode<T>* prev = NULL;
+	NextNode<T>* curr = back->getNext();  //the head
+	back->setNext(NULL);  //break the bridge link
 
-   while (curr != NULL)
-   {
-      prev = curr;
-      curr = curr->getNext();
-      delete prev;
-   }
+	while (curr != NULL)
+	{
+		prev = curr;
+		curr = curr->getNext();
+		delete prev;
+	}
 
-   sze = 0;
+	sze = 0;
 }
 
 template < class T >
 T* QueueLinked<T>::peek()
 {
-    T* item = NULL;
-    if (!isEmpty()) 
-    {  
-      // queue is not empty; retrieve front
-      NextNode<T>* head = back->getNext();
-      item = head->getItem();
-    }
-    return item;
+	 T* item = NULL;
+	 if (!isEmpty()) 
+	 {  
+		// queue is not empty; retrieve front
+		NextNode<T>* head = back->getNext();
+		item = head->getItem();
+	 }
+	 return item;
 }
 
 template < class T >
 void QueueLinked<T>::enqueue(T* item)
 {
-    NextNode<T>* node = new NextNode<T>(item);
+	 NextNode<T>* node = new NextNode<T>(item);
 
-    //DO THIS (enqueueing the first item is a special case)
-	if (back==NULL)
+	 //DO THIS (enqueueing the first item is a special case)
+	if (sze == 0)
 	{
 		//NextNode<T>* nullBack = new NextNode<T>(NULL);
 		back=node;
@@ -97,61 +97,45 @@ void QueueLinked<T>::enqueue(T* item)
 	else 
 	{
 
-		NextNode<T>* tempNode;
-		tempNode=back;
-		back=node;
-		tempNode->setNext(back);
+		NextNode<T>* head = back->getNext();
+		node->setNext(head);
+		back->setNext(node);
+		back = node;
 		
 	}
 
-
-
-
-
-
-
-    sze++;
+	 sze++;
 }
 
 template < class T >
 T* QueueLinked<T>::dequeue()
 {
-    T* item = NULL;
-
-    //DO THIS (dequeueing the last item is a special case)
-    //also, check that there are items before dequeueing
-	if ((back->getNext())==back)
+	 T* item = NULL;
+	
+	if(!isEmpty())
 	{
-		item=back->getItem();
-		back==NULL;
-		return item
+		if(sze == 1)
+		{
+			item = back->getItem();
+			delete back;
+			back = NULL;
+		}
+		else
+		{
+			NextNode<T>* head = back->getNext();
+			
+			item = head->getItem();
+			back->setNext(head->getNext());
+			
+			delete head;
+		}
+		
+		sze--;
 	}
 	
-	
-	
-   else if (!isEmpty()) 
-    {  
-      // queue is not empty; retrieve front
-      NextNode<T>* head = back->getNext();
-      item = head->getItem();
-	  back->setNext(head->getNext());
-	  delete head;
-	  return item;
-    }
-   
-	
+	return item;
 
-
-
-
-
-
-
-
-
-
-
-    
+	 
 }
 
 #endif
